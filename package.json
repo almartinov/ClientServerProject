@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "boolean": "^3.2.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongodb": "^4.13.0",
+    "mongoose": "^6.8.1",
+    "mysql": "^2.18.1",
+    "node-fetch": "^3.3.0",
+    "nodemailer": "^6.8.0",
+    "request": "^2.88.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "webproject",
+  "version": "1.0.0",
+  "description": "webproject",
+  "main": "server.js",
+  "author": "shmuel",
+  "license": "ISC"
+}
