@@ -152,7 +152,7 @@ app.get('/forgot-password/:email', function(req, res) {
       return;
     }
 
-    sendEmail(curr.email, 'Your Password', user.password);
+    sendEmail(user.email, 'Your Password', user.password);
     res.send(JSON.stringify({
       success: true,
       msg:"Enjoy your password"

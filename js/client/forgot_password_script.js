@@ -28,7 +28,7 @@ const resetPasswordClickEvent = function(e) {
         return false;
     }
 
-    fetch(`http://localhost:8080/forgot-password/${emailValue}`)
+    fetch(`forgot-password/${emailValue}`)
     .then(data => {
         return data.json();
     })
