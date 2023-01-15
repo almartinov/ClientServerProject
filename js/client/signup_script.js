@@ -39,7 +39,7 @@ const registerClickEvent = function(e) {
     return false;
   };
 
-  let url = 'http://localhost:8080/register-user';
+  let url = '/register-user';
   let options = {
     method: 'POST',
     headers: {

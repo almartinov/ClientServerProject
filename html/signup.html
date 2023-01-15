@@ -21,7 +21,7 @@
         function sendRecaptcha() {
             const captcha = document.querySelector('#g-recaptcha-response').value;
 
-            fetch('http://localhost:8080/verify-captcha', {
+            fetch('/verify-captcha', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
