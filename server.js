@@ -5,6 +5,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const { promisify } = require('util');
 const cookieParser = require('cookie-parser');
 const { stringify } = require('querystring');
@@ -15,6 +16,9 @@ var path = require('path');
 const User = require('./models/user');
 const Treatment = require('./models/treatment');
 const dbURI = 'mongodb+srv://webLabUser:webLabUser@webprojectcluster.j7jmi3d.mongodb.net/carSystemDB?retryWrites=true&w=majority';
+const encryptKey= "1234";
+var myCipher = crypto.createCipher('aes-128-cbc', encryptKey);
+var myDecipher = crypto.createDecipher('aes-128-cbc', encryptKey);
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json()); // support json encoded bodies
@@ -69,16 +73,33 @@ app.get('/logout', function (req, res) {
   if (checkFileExists(file_path)) {
     res.sendFile(path.join(__dirname + file_path));
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
-app.get('/login', function (req, res) {
+app.get('/sign-in', function (req, res) {
   const file_path = '/html/login.html';
   if (checkFileExists(file_path)) {
-    res.sendFile(path.join(__dirname + file_path));
+    if (req.cookies.user) {
+      res.redirect('/dashboard');
+    } else {
+      res.sendFile(path.join(__dirname + file_path));
+    }
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
+  }
+})
+
+app.get('/', function (req, res) {
+  const file_path = '/html/login.html';
+  if (checkFileExists(file_path)) {
+    if (req.cookies.user) {
+      res.redirect('/dashboard');
+    } else {
+      res.sendFile(path.join(__dirname + file_path));
+    }
+  } else {
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
@@ -87,16 +108,16 @@ app.get('/forgot-password', function (req, res) {
   if (checkFileExists(file_path)) {
     res.sendFile(path.join(__dirname + file_path));
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
-app.get('/signup', function (req, res) {
+app.get('/sign-up', function (req, res) {
   const file_path = '/html/signup.html';
   if (checkFileExists(file_path)) {
     res.sendFile(path.join(__dirname + file_path));
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
@@ -107,10 +128,10 @@ app.get('/dashboard', function (req, res) {
     if (req.cookies.user) {
       res.sendFile(path.join(__dirname + file_path));
     } else {
-      res.redirect('/login');
+      res.redirect('/sign-in');
     }
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
@@ -121,10 +142,10 @@ app.get('/about-us', function (req, res) {
     if (req.cookies.user) {
       res.sendFile(path.join(__dirname + file_path));
     } else {
-      res.redirect('/login');
+      res.redirect('/sign-in');
     }
   } else {
-    res.sendFile(path.join(__dirname + '/404.html'));
+    res.sendFile(path.join(__dirname + '/html/404.html'));
   }
 })
 
@@ -151,8 +172,9 @@ app.get('/forgot-password/:email', function(req, res) {
       }));
       return;
     }
-
-    sendEmail(user.email, 'Your Password', user.password);
+    let decryptedPassword = myDecipher.update(user.password,'hex','utf8');
+    decryptedPassword +=myDecipher.final('utf-8');
+    sendEmail(user.email, 'Your Password', decryptedPassword);
     res.send(JSON.stringify({
       success: true,
       msg:"Enjoy your password"
@@ -168,11 +190,13 @@ app.get('/forgot-password/:email', function(req, res) {
 
 //////////////////////////// Post Requests - Start /////////////////////////////
 app.post('/register-user', async (req, res) => {
+   let newPassword = myCipher.update(req.body.password,'utf8','hex');
+   newPassword+=myCipher.final('hex');
   const newUser = new User({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
-    password: await bcrypt.hash(req.body.password,12)
+    password: newPassword
   });
 
   User.find()
@@ -207,9 +231,11 @@ app.post('/register-user', async (req, res) => {
 
 app.post('/login-user', (req, res) => {
   let loginUser = req.body;
+  let inputPassword = myCipher.update(req.body.password,'utf8','hex');
+  inputPassword+=myCipher.final('hex');
   User.find()
     .then((users) => {
-      let user = users.find(curr => curr.email === loginUser.email && bcrypt.compareSync(loginUser.password, curr.password));
+      let user = users.find(curr => curr.email === loginUser.email && inputPassword === curr.password);
       if (user) {
         if (loginUser.rememberMe) {
           const expires = new Date();
@@ -342,5 +368,10 @@ app.delete('/dashboard/delete-treatment', async function(req, res) {
   return;
 });
 //////////////////////////// Delete Requests - End /////////////////////////////
+
+app.all('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/html/404.html'));
+});
+
 
 console.log('Server started! At http://localhost:' + port);
