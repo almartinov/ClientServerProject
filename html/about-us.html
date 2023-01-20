@@ -99,22 +99,27 @@
                                         placeholder="Contact name" style="margin: 5px;">
                                     <input type="email" class="form-control form-control-user" id="inputEmail" style="margin: 5px;"
                                         placeholder="Email" style="margin: 5px;">
-                                    <div class="dropdown mb-4">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin: 5px">
-                                            Select a subject
-                                        </button>
-                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton" >
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                        <textarea class="form-control" style="margin:5px">Enter message here...</textarea>
+                                        <select id="dropdownList" class="form-select" aria-label="Default select example" style="margin: 5px">
+                                            <option selected>Select a subject</option>
+                                            <option value="1">Billing details</option>
+                                            <option value="2">Account management</option>
+                                            <option value="3">Technical difficulties</option>
+                                          </select>                                     
+                                        <textarea id="formMessage" class="form-control" placeholder="Enter message here..." style="margin:5px"></textarea>
                                         <div>
-                                            <button class="btn btn-primary" id="addTreatmentBtn" type="button" style="margin: 5px;">Send</button>
+                                            <button class="btn btn-primary" id="submit_btn" type="button" style="margin: 5px;">Send</button>
                                         </div>
                                     </div> 
+                                    <hr class="sidebar-divider my-0">
+                                    <div class="col-sm-6">
+                                        <div style="margin:10px">
+                                            <span><label class="lables">NEED 24/7 SUPPORT:</label></span>
+                                            <br>
+                                            <button id="contact_btn" type="button" class="btn btn-warning" onclick = "parent.location='mailto:noOne@noWhere.com'">Contact Support</button>
+                        
+                                            </div>
+                                    </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
 
@@ -141,7 +146,21 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-modal="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel"></h5>
+                </div>
+                <div class="modal-body">
+                    <p id="modalText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="modalCloseBtn" type="button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -155,8 +174,7 @@
     <!-- Page level plugins -->
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-
+    <script type="module" src="js/client/contact-us.js"></script>
 </body>
 
 </html>

@@ -344,6 +344,14 @@ app.post('/dashboard/update-treatment', async function(req, res) {
   return;
 });
 
+app.post('/send-contact-email', function(req, res) {
+    sendEmail(req.body.email, 'Thank you for contacting support', 'We will contact you shortly in regards to your request');
+    res.send(JSON.stringify({
+      success: true,
+      msg:"Message received"
+    }));
+});
+
 //////////////////////////// Post Requests - End /////////////////////////////
 
 //////////////////////////// Delete Requests - Start /////////////////////////////
